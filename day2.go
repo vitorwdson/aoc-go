@@ -15,13 +15,26 @@ func main() {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 
-	shapeScoreMap := map[string]int{
+	drawShapeScoreMap := map[string]int{
 		"A": 1,
 		"B": 2,
 		"C": 3,
-		"X": 1,
-		"Y": 2,
-		"Z": 3,
+	}
+	winShapeScoreMap := map[string]int{
+		"A": 2,
+		"B": 3,
+		"C": 1,
+	}
+	lossShapeScoreMap := map[string]int{
+		"A": 3,
+		"B": 1,
+		"C": 2,
+	}
+
+	outcomeScoreMap := map[string]int{
+		"X": 0,
+		"Y": 3,
+		"Z": 6,
 	}
 
 	totalScore := 0
@@ -29,21 +42,20 @@ func main() {
 		line := scanner.Text()
 
 		opponentChoice := string(line[0])
-		yourChoice := string(line[2])
+		desiredOutcome := string(line[2])
 
-		opponentShapeScore := shapeScoreMap[opponentChoice]
-		yourShapeScore := shapeScoreMap[yourChoice]
-
-		var outcomeScore int
-		if yourShapeScore == opponentShapeScore {
-			outcomeScore = 3
-		} else if opponentShapeScore%3 == yourShapeScore-1 {
-			outcomeScore = 6
-		} else {
-			outcomeScore = 0
+		var shapeScore int
+		switch desiredOutcome {
+		case "X":
+			shapeScore = lossShapeScoreMap[opponentChoice]
+		case "Y":
+			shapeScore = drawShapeScoreMap[opponentChoice]
+		case "Z":
+			shapeScore = winShapeScoreMap[opponentChoice]
 		}
 
-		totalScore += yourShapeScore + outcomeScore
+		outcomeScore := outcomeScoreMap[desiredOutcome]
+		totalScore += shapeScore + outcomeScore
 	}
 
 	fmt.Printf("Your total score is %d\n", totalScore)
