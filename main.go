@@ -21,6 +21,7 @@ func main() {
 		"2022": {
 			"1": year2022.Day1,
 			"2": year2022.Day2,
+			"3": year2022.Day3,
 		},
 	}
 
