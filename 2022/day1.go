@@ -1,4 +1,4 @@
-package main
+package year2022
 
 import (
 	"bufio"
@@ -8,8 +8,8 @@ import (
 	"strconv"
 )
 
-func main() {
-	file, err := os.Open("inputs/day1.input")
+func Day1() {
+	file, err := os.Open("./inputs/2022/day1.input")
 	if err != nil {
 		panic(err)
 	}
@@ -33,7 +33,7 @@ func main() {
 		}
 	}
 
-    topElvesSum := topElves[0] + topElves[1] + topElves[2]
+	topElvesSum := topElves[0] + topElves[1] + topElves[2]
 	fmt.Printf("The elf carrying the most calories is carrying %d calories\n", topElves[2])
 	fmt.Printf("The top elves are carrying %d calories combined\n", topElvesSum)
 }

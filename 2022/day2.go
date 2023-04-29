@@ -1,4 +1,4 @@
-package main
+package year2022
 
 import (
 	"bufio"
@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-func main() {
-	file, err := os.Open("inputs/day2.input")
+func Day2() {
+	file, err := os.Open("./inputs/2022/day2.input")
 	if err != nil {
 		panic(err)
 	}
