@@ -26,6 +26,7 @@ func Day2() {
 	scanner.Split(bufio.ScanLines)
 
 	idSum := 0
+	powerSum := 0
 	for scanner.Scan() {
 		line := scanner.Text()
 
@@ -43,6 +44,12 @@ func Day2() {
 		var color string
 		isValid := true
 
+		minSet := map[string]int{
+			"red":   0,
+			"green": 0,
+			"blue":  0,
+		}
+
 		for _, c := range subsets {
 			if c == ' ' {
 				continue
@@ -54,9 +61,12 @@ func Day2() {
 					panic(err)
 				}
 
+				if amount > minSet[color] {
+					minSet[color] = amount
+				}
+
 				if amount > maxCubes[color] {
 					isValid = false
-					break
 				}
 
 				amountString = ""
@@ -78,7 +88,10 @@ func Day2() {
 			idSum += id
 		}
 
+		power := minSet["red"] * minSet["green"] * minSet["blue"]
+		powerSum += power
 	}
 
-	fmt.Println(idSum)
+	fmt.Println("Part1:", idSum)
+	fmt.Println("Part2:", powerSum)
 }
