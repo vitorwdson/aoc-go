@@ -35,10 +35,6 @@ type FoundDigit struct {
 	index int
 }
 
-func isDigit(c rune) bool {
-	return c >= '0' && c <= '9'
-}
-
 func Day1() {
 	file, err := os.Open("./inputs/2023/day1.input")
 	if err != nil {
