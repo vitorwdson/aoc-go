@@ -17,9 +17,10 @@ type PartNumber struct {
 }
 
 type Symbol struct {
-	char rune
-	line int
-	col  int
+	char        rune
+	line        int
+	col         int
+	partNumbers []int
 }
 
 func Day3() {
@@ -32,7 +33,7 @@ func Day3() {
 	scanner.Split(bufio.ScanLines)
 
 	partNumbers := []PartNumber{}
-	symbols := []Symbol{}
+	symbols := []*Symbol{}
 
 	lineNumber := 0
 	for scanner.Scan() {
@@ -66,10 +67,11 @@ func Day3() {
 				continue
 			}
 
-			symbols = append(symbols, Symbol{
-				char: c,
-				line: lineNumber,
-				col:  col,
+			symbols = append(symbols, &Symbol{
+				char:        c,
+				line:        lineNumber,
+				col:         col,
+				partNumbers: []int{},
 			})
 		}
 
@@ -86,13 +88,13 @@ func Day3() {
 				continue
 			}
 
-			validCol := symbol.col >= partNumber.col-1 && symbol.col <= partNumber.col + partNumber.len
+			validCol := symbol.col >= partNumber.col-1 && symbol.col <= partNumber.col+partNumber.len
 			if !validCol {
 				continue
 			}
 
+			symbol.partNumbers = append(symbol.partNumbers, partNumber.number)
 			isValid = true
-			break
 		}
 
 		if isValid {
@@ -100,5 +102,19 @@ func Day3() {
 		}
 	}
 
+	totalGearRatio := 0
+	for _, symbol := range symbols {
+		if symbol.char != '*' {
+			continue
+		}
+
+		if len(symbol.partNumbers) != 2 {
+			continue
+		}
+
+		totalGearRatio += symbol.partNumbers[0] * symbol.partNumbers[1]
+	}
+
 	fmt.Println("Sum of part numbers:", totalPartNumber)
+	fmt.Println("Sum of gear ratios:", totalGearRatio)
 }
