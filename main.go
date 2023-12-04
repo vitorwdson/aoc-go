@@ -29,6 +29,7 @@ func main() {
 		"2023": {
 			"1": year2023.Day1,
 			"2": year2023.Day2,
+			"3": year2023.Day3,
 		},
 	}
 
