@@ -19,7 +19,7 @@ type Map struct {
 }
 type Almanac = map[string]*Map
 
-func (m *Map) GetDestinationFromSource(source int) int {
+func (m *Map) GetDestination(source int) int {
 	for _, mapRange := range m.Ranges {
 		minSource := mapRange.SourceStart
 		maxSource := minSource + mapRange.Range - 1
@@ -34,13 +34,13 @@ func (m *Map) GetDestinationFromSource(source int) int {
 }
 
 func GetLocationFromSeed(almanac Almanac, seed int) int {
-	soil := almanac["seed-to-soil"].GetDestinationFromSource(seed)
-	fertilizer := almanac["soil-to-fertilizer"].GetDestinationFromSource(soil)
-	water := almanac["fertilizer-to-water"].GetDestinationFromSource(fertilizer)
-	light := almanac["water-to-light"].GetDestinationFromSource(water)
-	temperature := almanac["light-to-temperature"].GetDestinationFromSource(light)
-	humidity := almanac["temperature-to-humidity"].GetDestinationFromSource(temperature)
-	location := almanac["humidity-to-location"].GetDestinationFromSource(humidity)
+	soil := almanac["seed-to-soil"].GetDestination(seed)
+	fertilizer := almanac["soil-to-fertilizer"].GetDestination(soil)
+	water := almanac["fertilizer-to-water"].GetDestination(fertilizer)
+	light := almanac["water-to-light"].GetDestination(water)
+	temperature := almanac["light-to-temperature"].GetDestination(light)
+	humidity := almanac["temperature-to-humidity"].GetDestination(temperature)
+	location := almanac["humidity-to-location"].GetDestination(humidity)
 
 	return location
 }
@@ -111,14 +111,28 @@ func Day5() {
 		})
 	}
 
-	lowestLocation := int(math.Inf(1)) - 1
+	lowestLocationPlain := int(math.Inf(1)) - 1
 	for _, seed := range seeds {
 		location := GetLocationFromSeed(almanac, seed)
 
-		if location < lowestLocation {
-			lowestLocation = location
+		if location < lowestLocationPlain {
+			lowestLocationPlain = location
 		}
 	}
+	fmt.Println("Lowest Location (with plain seed list):", lowestLocationPlain)
 
-	fmt.Println("Lowest Location:", lowestLocation)
+	lowestLocationRange := int(math.Inf(1)) - 1
+	for j := 0; j < len(seeds); j += 2 {
+		minSeed := seeds[j]
+		maxSeed := minSeed + seeds[j+1]
+
+		for seed := minSeed; seed < maxSeed; seed++ {
+			location := GetLocationFromSeed(almanac, seed)
+
+			if location < lowestLocationRange {
+				lowestLocationRange = location
+			}
+		}
+	}
+	fmt.Println("Lowest Location (with seed ranges):", lowestLocationRange)
 }
