@@ -10,16 +10,18 @@ import (
 	"github.com/vitorwdson/aoc-go/utils"
 )
 
-func GetLineNumbers(line string) []int {
+func GetLineNumbers(line string) ([]int, int) {
 	colonIndex := strings.Index(line, ":")
-	numbersPart := line[colonIndex + 1:] + " "
+	numbersPart := line[colonIndex+1:] + " "
 
 	numberString := ""
+	singularString := ""
 	numbers := []int{}
 
 	for _, c := range numbersPart {
 		if utils.IsDigit(c) {
 			numberString += string(c)
+			singularString += string(c)
 			continue
 		}
 
@@ -36,7 +38,25 @@ func GetLineNumbers(line string) []int {
 		numberString = ""
 	}
 
-	return numbers
+	singlarNumber, err := strconv.Atoi(singularString)
+	if err != nil {
+		panic(err)
+	}
+
+	return numbers, singlarNumber
+}
+
+func GetNumberOfWays(time int, distance int) int {
+	numberOfWays := 0
+
+	for t := 0; t <= time; t++ {
+		d := (time - t) * t
+		if d > distance {
+			numberOfWays++
+		}
+	}
+
+	return numberOfWays
 }
 
 func Day6() {
@@ -52,33 +72,26 @@ func Day6() {
 		panic("Invalid input")
 	}
 	timeLine := scanner.Text()
-	times := GetLineNumbers(timeLine)
+	times, singularTime := GetLineNumbers(timeLine)
 
 	if !scanner.Scan() {
 		panic("Invalid input")
 	}
 	distanceLine := scanner.Text()
-	distances := GetLineNumbers(distanceLine)
+	distances, singularDistance := GetLineNumbers(distanceLine)
 
 	if len(times) != len(distances) {
 		panic("Invalid input")
 	}
 
-	total := 1
+	multipleRacesTotal := 1
 	for i := 0; i < len(times); i++ {
 		time := times[i]
 		distance := distances[i]
 
-		numberOfWays := 0
-		for t := 0; t <= time; t++ {
-			d := (time-t)*t
-			if d > distance {
-				numberOfWays++
-			}
-		}
-
-		total *= numberOfWays
+		multipleRacesTotal *= GetNumberOfWays(time, distance)
 	}
 
-	fmt.Println("Total:", total)
+	fmt.Println("Multiple Races Total:", multipleRacesTotal)
+	fmt.Println("Singular Race Total:", GetNumberOfWays(singularTime, singularDistance))
 }
