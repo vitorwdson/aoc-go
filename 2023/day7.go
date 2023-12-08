@@ -13,16 +13,16 @@ var stampStrength = map[rune]int{
 	'A': 13,
 	'K': 12,
 	'Q': 11,
-	'J': 10,
-	'T': 9,
-	'9': 8,
-	'8': 7,
-	'7': 6,
-	'6': 5,
-	'5': 4,
-	'4': 3,
-	'3': 2,
-	'2': 1,
+	'T': 10,
+	'9': 9,
+	'8': 8,
+	'7': 7,
+	'6': 6,
+	'5': 5,
+	'4': 4,
+	'3': 3,
+	'2': 2,
+	'J': 1,
 }
 
 type Hand struct {
@@ -76,6 +76,28 @@ func GetTypeStrength(cards string) int {
 	return 1
 }
 
+func GetJokerTypeStrength(cards string) int {
+	if strings.Index(cards, "J") == -1 {
+		return GetTypeStrength(cards)
+	}
+
+	strength := 0
+	for c := range stampStrength {
+		if c == 'J' {
+			continue
+		}
+
+		tmpCards := strings.ReplaceAll(cards, "J", string(c))
+		tmpStrength := GetTypeStrength(tmpCards)
+
+		if tmpStrength > strength {
+			strength = tmpStrength
+		}
+	}
+
+	return strength
+}
+
 func CompareHands(hand1, hand2 *Hand) int {
 	if hand1.typeStrength > hand2.typeStrength {
 		return 1
@@ -127,7 +149,7 @@ func Day7() {
 		hands = append(hands, &Hand{
 			cards:        cards,
 			bid:          bid,
-			typeStrength: GetTypeStrength(cards),
+			typeStrength: GetJokerTypeStrength(cards),
 		})
 	}
 
