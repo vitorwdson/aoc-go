@@ -7,6 +7,70 @@ import (
 	"strings"
 )
 
+func CalculateSteps(network map[string][2]string, instructions string, start string, part2 bool) int {
+	steps := 0
+	found := false
+
+	currNode := start
+	for !found {
+		for _, c := range instructions {
+			steps++
+
+			var direction int
+			if c == 'L' {
+				direction = 0
+			} else if c == 'R' {
+				direction = 1
+			} else {
+				panic("Invalid input")
+			}
+
+			newNode := network[currNode][direction]
+			if part2 {
+				if newNode[len(newNode)-1] == 'Z' {
+					found = true
+					break
+				}
+			} else {
+				if newNode == "ZZZ" {
+					found = true
+					break
+				}
+			}
+
+			currNode = newNode
+		}
+	}
+
+	return steps
+}
+
+func GreatestCommonDivision(a, b int) int {
+	for b != 0 {
+		t := b
+		b = a % b
+		a = t
+	}
+	return a
+}
+
+func LeastCommonMultiple(values ...int) int {
+	if len(values) < 2 {
+		return 1
+	}
+
+	a := values[0]
+	b := values[1]
+
+	result := a * b / GreatestCommonDivision(a, b)
+
+	for _, v := range values[2:] {
+		result = LeastCommonMultiple(result, v)
+	}
+
+	return result
+}
+
 func Day8() {
 	file, err := os.Open("./inputs/2023/day8.input")
 	if err != nil {
@@ -44,74 +108,24 @@ func Day8() {
 		network[node] = ([2]string)(elements)
 	}
 
-	steps := 0
-	found := false
+	part1Steps := CalculateSteps(network, instructions, "AAA", false)
+	fmt.Println("Steps required (AAA to ZZZ):", part1Steps)
 
-	currNode := "AAA"
-	for !found {
-		for _, c := range instructions {
-			steps++
-
-			var direction int
-			if c == 'L' {
-				direction = 0
-			} else if c == 'R' {
-				direction = 1
-			} else {
-				panic("Invalid input")
-			}
-
-			newNode := network[currNode][direction]
-			if newNode == "ZZZ" {
-				found = true
-				break
-			}
-
-			currNode = newNode
-		}
-	}
-
-	fmt.Println("Steps required (AAA to ZZZ):", steps)
-
-	currNodes := []string{}
+	part2StepsList := []int{}
 	for node := range network {
 		if node[len(node)-1] == 'A' {
-			currNodes = append(currNodes, node)
+			part2StepsList = append(
+				part2StepsList,
+				CalculateSteps(
+					network,
+					instructions,
+					node,
+					true,
+				),
+			)
 		}
 	}
 
-	found = false
-	steps = 0
-
-	for !found {
-		for _, c := range instructions {
-			steps++
-
-			var direction int
-			if c == 'L' {
-				direction = 0
-			} else if c == 'R' {
-				direction = 1
-			} else {
-				panic("Invalid input")
-			}
-
-			ended := 0
-			for i, node := range currNodes {
-				newNode := network[node][direction]
-				if newNode[len(newNode)-1] == 'Z' {
-					ended++
-				}
-
-				currNodes[i] = newNode
-			}
-
-			if ended == len(currNodes) {
-				found = true
-				break
-			}
-		}
-	}
-
-	fmt.Println("Steps required (All A's to all Z's):", steps)
+	part2Steps := LeastCommonMultiple(part2StepsList...)
+	fmt.Println("Steps required (All A's to all Z's):", part2Steps)
 }
