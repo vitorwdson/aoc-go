@@ -71,5 +71,47 @@ func Day8() {
 		}
 	}
 
-	fmt.Println("Steps required:", steps)
+	fmt.Println("Steps required (AAA to ZZZ):", steps)
+
+	currNodes := []string{}
+	for node := range network {
+		if node[len(node)-1] == 'A' {
+			currNodes = append(currNodes, node)
+		}
+	}
+
+	found = false
+	steps = 0
+
+	for !found {
+		for _, c := range instructions {
+			steps++
+
+			var direction int
+			if c == 'L' {
+				direction = 0
+			} else if c == 'R' {
+				direction = 1
+			} else {
+				panic("Invalid input")
+			}
+
+			ended := 0
+			for i, node := range currNodes {
+				newNode := network[node][direction]
+				if newNode[len(newNode)-1] == 'Z' {
+					ended++
+				}
+
+				currNodes[i] = newNode
+			}
+
+			if ended == len(currNodes) {
+				found = true
+				break
+			}
+		}
+	}
+
+	fmt.Println("Steps required (All A's to all Z's):", steps)
 }
