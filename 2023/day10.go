@@ -163,6 +163,23 @@ func FindStartChar(
 	return startChar, next, prev
 }
 
+func FindPipe(head *Pipe, x int, y int) *Pipe {
+	if head.x == x && head.y == y {
+		return head
+	}
+
+	curr := head.next
+	for curr != head {
+		if curr.x == x && curr.y == y {
+			return curr
+		}
+
+		curr = curr.next
+	}
+
+	return nil
+}
+
 func Day10() {
 	file, err := os.Open("./inputs/2023/day10.input")
 	if err != nil {
@@ -259,4 +276,32 @@ func Day10() {
 	}
 
 	fmt.Println("Steps from start to farthest position:", dist)
+
+	enclosedTiles := 0
+	for y := 0; y < len(maze); y++ {
+		vertical := 0
+		lastDelta := 0
+
+		for x := 0; x < len(maze[y]); x++ {
+			pipe := FindPipe(start, x, y)
+
+			if pipe != nil {
+				delta := 0
+				if pipe.y > pipe.prev.y || pipe.y < pipe.next.y {
+					delta = 1
+				} else if pipe.y < pipe.prev.y || pipe.y > pipe.next.y {
+					delta = -1
+				}
+
+				if delta != 0 && delta != lastDelta {
+					vertical++
+					lastDelta = delta
+				}
+			} else if vertical % 2 == 1 {
+				enclosedTiles += 1
+			}
+		}
+	}
+
+	fmt.Println("Tiles enclosed by the loop:", enclosedTiles)
 }
