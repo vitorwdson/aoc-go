@@ -31,7 +31,7 @@ func Day11() {
 		}
 
 		if !hasGalaxy {
-			y++
+			y += 999999
 		}
 		y++
 	}
@@ -59,11 +59,11 @@ func Day11() {
 			gx := galaxies[j][0]
 
 			if gx >= i+colOffset {
-				galaxies[j][0] += 1
+				galaxies[j][0] += 999999
 			}
 		}
 
-		colOffset++
+		colOffset += 999999
 	}
 
 	sumOfLengths := 0
