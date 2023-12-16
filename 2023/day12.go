@@ -4,40 +4,94 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"slices"
 	"strconv"
 	"strings"
 )
 
-func CalculateGroups(records string) []int {
-	groups := []int{}
+func IsArrangementValid(records string, groups []int) bool {
+	damaged := strings.Count(records, "#")
 
-	for _, g := range strings.Split(records, ".") {
-		if len(g) > 0 && g[0] == '#' {
-			groups = append(groups, len(g))
+	if damaged > 0 && len(groups) == 0 {
+		return false
+	}
+
+	damagedGroups := strings.FieldsFunc(records, func(r rune) bool {
+		return r != '#'
+	})
+	if len(damagedGroups) != len(groups) {
+		return false
+	}
+
+	for i, g := range damagedGroups {
+		if len(g) != groups[i] {
+			return false
 		}
 	}
 
-	return groups
+	return true
 }
 
+func IgnoreValidGroup(records string, group int) string {
+	if len(records) < group {
+		return ""
+	}
+
+	for i := 0; i < group; i++ {
+		if records[i] == '.' {
+			return ""
+		}
+	}
+
+	if len(records) == group {
+		return ""
+	}
+
+	if records[group] == '#' {
+		return ""
+	}
+
+	return records[group+1:]
+}
+
+var cache = map[string]int{}
+
 func CalculateArrangementCount(records string, groups []int) int {
-	unknownIndex := strings.Index(records, "?")
-	if unknownIndex == -1 {
-		recordsGroups := CalculateGroups(records)
-		if slices.Equal(recordsGroups, groups) {
+	key := records + fmt.Sprint(groups)
+	if count, exists := cache[key]; exists {
+		return count
+	}
+
+	cache[key] = 0
+	unknown := strings.Count(records, "?")
+	valid := IsArrangementValid(records, groups)
+
+	if unknown == 0 {
+		if valid {
+			cache[key] = 1
 			return 1
 		}
 
 		return 0
 	}
 
-	operationalRecords := strings.Replace(records, "?", ".", 1)
-	count := CalculateArrangementCount(operationalRecords, groups)
+	if records[0] == '.' {
+		cache[key] = CalculateArrangementCount(records[1:], groups)
+		return cache[key]
+	}
 
-	damagedRecords := strings.Replace(records, "?", "#", 1)
-	count += CalculateArrangementCount(damagedRecords, groups)
+	count := 0
+	if records[0] == '?' {
+		count += CalculateArrangementCount(records[1:], groups)
+	}
 
+	if len(groups) > 0 {
+		newRecords := IgnoreValidGroup(records, groups[0])
+		if newRecords != "" {
+			count += CalculateArrangementCount(newRecords, groups[1:])
+		}
+	}
+
+	cache[key] = count
 	return count
 }
 
@@ -52,6 +106,7 @@ func Day12() {
 	scanner.Split(bufio.ScanLines)
 
 	totalArrangementCount := 0
+	totalUnfoldedArrangementCount := 0
 	for scanner.Scan() {
 		line := scanner.Text()
 
@@ -74,7 +129,17 @@ func Day12() {
 
 		arrangementCount := CalculateArrangementCount(records, groups)
 		totalArrangementCount += arrangementCount
+		fmt.Print("-----", arrangementCount, "\n\n")
+
+		// for i := 0; i < 5; i++ {
+		// 	records += "?" + records
+		// 	groups = append(groups, groups...)
+		// }
+		//
+		// unfoldedUrrangementCount := CalculateArrangementCount(records, groups)
+		// totalUnfoldedArrangementCount += unfoldedUrrangementCount
 	}
 
 	fmt.Println("Sum of all arrangement counts:", totalArrangementCount)
+	fmt.Println("Sum of all unfolded arrangement counts:", totalUnfoldedArrangementCount)
 }
