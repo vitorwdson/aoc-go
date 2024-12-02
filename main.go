@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/vitorwdson/aoc-go/2022"
+	year2022 "github.com/vitorwdson/aoc-go/2022"
 	year2023 "github.com/vitorwdson/aoc-go/2023"
+	year2024 "github.com/vitorwdson/aoc-go/2024"
 )
 
 func main() {
@@ -15,7 +16,6 @@ func main() {
 		fmt.Println("You need to specify the year and day to execute the program")
 		os.Exit(1)
 	}
-		
 
 	year := args[1]
 	day := args[2]
@@ -27,18 +27,21 @@ func main() {
 			"3": year2022.Day3,
 		},
 		"2023": {
-			"1": year2023.Day1,
-			"2": year2023.Day2,
-			"3": year2023.Day3,
-			"4": year2023.Day4,
-			"5": year2023.Day5,
-			"6": year2023.Day6,
-			"7": year2023.Day7,
-			"8": year2023.Day8,
-			"9": year2023.Day9,
+			"1":  year2023.Day1,
+			"2":  year2023.Day2,
+			"3":  year2023.Day3,
+			"4":  year2023.Day4,
+			"5":  year2023.Day5,
+			"6":  year2023.Day6,
+			"7":  year2023.Day7,
+			"8":  year2023.Day8,
+			"9":  year2023.Day9,
 			"10": year2023.Day10,
 			"11": year2023.Day11,
 			"12": year2023.Day12,
+		},
+		"2024": {
+			"1": year2024.Day1,
 		},
 	}
 
